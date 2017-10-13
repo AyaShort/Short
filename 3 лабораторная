@@ -1,0 +1,401 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lab_3_10
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Pls, inizialize , who will create objects");//инициализация строки author
+
+            Set set = new Set();
+            Set set_1 = new Set();
+
+            set.Enter();
+            set_1.Enter();
+
+            set.Add();
+            set.Delete();
+
+
+            //Проверяю свойства и методы на одном объекте
+            Console.WriteLine(set.ToString());
+
+            Console.WriteLine(set.reWriteFull());
+
+            Console.WriteLine("Sum of first set is : " + set.Sum);
+
+            Console.WriteLine("Length of first set is : " + set.Length);
+
+            Console.WriteLine("HashCode of first set : " + set.GetHashCode());
+
+            Console.WriteLine("Type of this object is " + set.GetType());
+
+            if (set.Equals(set_1) == true)
+            {
+                Console.WriteLine("First set bigger than second");
+            }
+            else
+                Console.WriteLine(" Second set is bigger than first");
+
+            Console.WriteLine("Information about class : " + Set.GetInfo());
+
+
+
+            //методы для ref и out 
+            /*не представляют практической пользы для класса , но показывает , что для ref - аргумент
+             * должен быть инициализирован , в отличии от out
+            */
+            int x = 0;
+            int X;
+
+            set.First(ref x);
+            Console.WriteLine("Value <x> after method with ref : " + x);
+            set.Second(out X);
+            Console.WriteLine("Value <X> after method with ref : " + x);
+
+
+
+
+            //Работа с массивом объектов
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Work with array's of objects");
+            Console.ResetColor();
+            Set[] group = new Set[3];
+
+             for (int j = 0; j < group.Length; j++)
+             {
+                group[j] = new Set();
+                group[j].Enter();
+             }
+            
+
+            for (int i = 0; i < group.Length; i++)
+            {
+                group[i].Show();
+                Console.WriteLine();
+
+            }
+            Console.WriteLine("Set's with biggest and smallest summ of elements :");
+
+            //Множества с наибольшей/наименьшей суммой
+            double min = group[0].Sum;
+            double max = min;
+            int Max = 0;
+            int Min = 0;
+
+            for (int i = 0; i < group.Length; i++)
+            {
+                if (group[i].Sum > max)
+                {
+                    max = group[i].Sum;
+                    Max = i;
+                }
+                if (group[i].Sum < min)
+                {
+                    min = group[i].Sum;
+                    Min = i;
+                }
+
+            }
+            Console.WriteLine("The biggest sum with number : " + (Max + 1) + " More info : \n"
+                 + group[Max].Sum);
+            Console.WriteLine("The smallest sum with number : " + (Min + 1) + " More info : \n "
+                + group[Min].Sum);
+
+            Console.WriteLine("Set's with negative number's : ");
+
+
+            //Множества с отрицательными элементами
+            for (int i = 0; i < group.Length; i++)
+            {
+                for (int j = 0; j < group[i].Length; j++)
+                {
+                    if (group[i].Arr[j] < 0)
+                    {
+                        Console.WriteLine("Set with number " + (i+1) + " : ");
+                        group[i].Show();
+                        Console.WriteLine();
+                        break;
+                    }
+                }
+
+            }
+
+
+            Console.ReadKey();
+
+        }
+
+        public partial class Set
+        {
+            private int length;
+            private int[] array;
+            private int sum  = 0 ;
+
+ 
+
+            //Свойства
+
+            public int Length // свойство с условием для set
+            {
+                get => length;
+                set
+                {
+                    if (value <= 0)
+                    {
+                        Console.WriteLine($"{nameof(value)} must be bigger than zero!!!");
+                    }
+                    else
+                        length = value;
+                }
+            }
+
+            public int[] Arr
+            {
+                get => array;
+            }
+
+            public int Sum
+            {
+                get => sum;
+            }
+
+            //Конструкторы 
+            //private Circle(){} - закрытый конструктор
+            //используется только для защиты классов , для того чтобы невозможно было создать объект
+            //класса . Пример такого класса - стандартный класс Math
+
+            public Set()
+            {
+                length = 0;
+                array = new int[length];
+                counter++;
+                sum = 0;
+                ID = counter;
+            }
+
+            public Set(int Length) : this()
+            {
+                Random rand = new Random();
+                length = Length;
+                array = new int[length];
+                array = new int[length];
+                for (int i = 0; i < length; i++)
+                {
+                    int x = rand.Next(-10, 10);
+                    if (!array.Contains(x))
+                        array[i] = x;
+                }
+
+                for (int i = 0; i < length; i++)
+                {
+                    sum += array[i];
+                }
+                
+            }
+
+            public Set( int[] Array) : this()
+            {
+                array = Array;
+                length = Array.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    sum += array[i];
+                }
+            }
+
+
+
+            //TODO :
+            /*
+             *  Методы: добавляют элемент к множеству, удаляют элемент,
+             *  выводят текущее количество элементов множества. Создать массив объектов.
+             *  Вывести: a)   множества  с наименьшей/наибольшей суммой элементов;  
+             *  b) список множеств, содержащих отрицательные элементы
+             */
+
+            //Методы 
+
+            public void Enter()
+            {
+                Console.WriteLine("Enter size of your Set : ");
+                length = int.Parse(Console.ReadLine());
+                array = new int[length];
+                for (int i = 0; i < length; i++)
+                {
+                    m: Console.WriteLine("Put element : ");
+                    int x = int.Parse(Console.ReadLine());
+                    if (!array.Contains(x))
+                        array[i] = x;
+                    else
+                    {
+                        Console.WriteLine("Set can not have any simple numbers! \n Put another number ");
+                        goto m;
+                    }
+                }
+                for (int i = 0; i < length; i++)
+                {
+                    sum += array[i];
+                }
+                this.Show();
+            }
+
+            public void Show()
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    Console.Write(array[i] + " ");
+                }
+                Console.WriteLine();
+            }
+
+            public  Set Increment(Set set)//добавление случайного элемента
+            {
+                bool coincidence = false;
+                Random rand = new Random();
+                int[] buffer = new int[set.length + 1];
+
+                for (int i = 0; i < set.length; i++)
+                    buffer[i] = set.array[i];
+                while (coincidence != true)
+                {
+                    int x = rand.Next(-100, 100);
+
+                    if (!buffer.Contains(x))
+                    {
+                        buffer[set.length] = x;
+                        coincidence = true;
+                        set.array = buffer;
+                        set.length++;
+                    }
+                }
+                return (set);
+            }
+
+            public void Add()
+            {
+                Console.WriteLine("Put new element");
+                int[] buffer = new int[length + 1];
+                for (int i = 0; i < length; i++)
+                    buffer[i] = array[i];
+                m: int x = int.Parse(Console.ReadLine());
+                if (!array.Contains(x))
+                {
+                    buffer[length] = x;
+                    length++;
+                    array = buffer;
+                    for (int i = 0; i < buffer.Length; i++)
+                        Console.Write(array[i]+  " ");
+                }
+                else
+                {
+                    Console.WriteLine("Set can not have any simple numbers! \n Put another number ");
+                    goto m;
+                }
+                sum += buffer[length-1];
+            }
+
+            public void Delete()
+            {
+                Console.WriteLine("Choose , what element u wanna delete (selest by position) : ");
+                this.Show();
+                int choosen = int.Parse(Console.ReadLine());
+                int[] buffer = new int[length-1];
+                int count = 0;
+                sum -= array[choosen-1];
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i] != array[choosen - 1] && count < buffer.Length)
+                    {
+                        buffer[count] = array[i];
+                        count++;
+                    }      
+                }
+                length--;
+                array = buffer;
+                this.Show();
+
+            }
+
+            //Методы для примера с ref и out
+
+            public void First(ref int x)
+            {
+                x = length +sum;
+            }
+
+            public void Second(out int X)//метод для примера с out
+            {
+                
+                X = length*2;
+            }
+
+        }
+
+
+
+        public partial class Set
+        {
+            /* для придания смысла разделения класса , в одной части были оставлены поля
+        * и методы для непосредственной работы с объектами , а во второй части - 
+        * статические поля и методы  , а также переопределенные методы
+         */
+
+            // статические поля
+            static string author;
+            private static string about = "Class for creating set's";
+            public const string type = "Set with nonrepeatable element's";
+            public static int counter = 0;
+            public readonly double ID;
+
+
+
+
+            //статические и переопределенные методы
+
+            public override string ToString()
+            {
+                return "Length " + length  + " , Sum : " + sum;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null) return false;
+                if (obj.GetType() != this.GetType()) return false;
+                Set cir = (Set)obj;
+                return (this.sum > cir.sum);
+            }
+
+            public override int GetHashCode()
+            {
+                int hash = 269;
+                hash = (hash * 47) + sum.GetHashCode();
+                return hash;
+            }
+
+            static Set() // статический конструктор типа
+            {
+                author = Console.ReadLine();
+            }
+
+
+            public string reWriteFull()
+            {
+                return "Length : " + length + " , Sum : "  + " , Type : " + type +
+                    ", Author : " + author + ", ID: " + ID;
+            }
+
+
+            public static string GetInfo()
+            {
+                return about;
+            }
+        }
+
+    }
+}
